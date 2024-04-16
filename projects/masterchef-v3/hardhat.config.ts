@@ -38,6 +38,17 @@ const eth: NetworkUserConfig = {
   accounts: [process.env.KEY_ETH!],
 };
 
+const calypso: NetworkUserConfig = {
+  url: 'https://testnet.skalenodes.com/v1/giant-half-dual-testnet',
+  chainId: 974399131,
+  accounts: [process.env.KEY_CALY!],
+}
+
+const zKyoto: NetworkUserConfig = {
+  url: 'https://rpc.startale.com/zkyoto',
+  accounts: [process.env.KEY_ZKYOTO!],
+}
+
 const config = {
   defaultNetwork: "hardhat",
   networks: {
@@ -46,6 +57,8 @@ const config = {
     ...(process.env.KEY_MAINNET && { bscMainnet }),
     ...(process.env.KEY_GOERLI && { goerli }),
     ...(process.env.KEY_ETH && { eth }),
+    ...(process.env.KEY_CALY && { calypso }),
+    ...(process.env.KEY_ZKYOTO && { zKyoto }),
     // testnet: bscTestnet,
     // mainnet: bscMainnet,
   },

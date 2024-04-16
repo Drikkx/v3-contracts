@@ -6,6 +6,8 @@ const networks = {
   goerli: 'goerli',
   bscMainnet: 'bscMainnet',
   bscTestnet: 'bscTestnet',
+  calyspo: 'calyspo',
+  zKyoto: 'zKyoto',
   hardhat: 'hardhat',
 }
 

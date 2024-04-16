@@ -11,7 +11,7 @@ import './libraries/LmTick.sol';
 
 import './interfaces/IPancakeV3LmPool.sol';
 import './interfaces/IMasterChefV3.sol';
-import './interfaces/IPancakeV3LmPoolDeveloper.sol';
+import './PancakeV3LmPoolDeployer.sol';
 
 contract PancakeV3LmPool is IPancakeV3LmPool {
   using LowGasSafeMath for uint256;
@@ -49,7 +49,7 @@ contract PancakeV3LmPool is IPancakeV3LmPool {
   }
 
   constructor() {
-    (address poolAddress, address masterChefAddress) = IPancakeV3LmPoolDeveloper(msg.sender).parameters();
+    (address poolAddress, address masterChefAddress) = PancakeV3LmPoolDeployer(msg.sender).parameters();
     pool = IPancakeV3Pool(poolAddress);
     masterChef = IMasterChefV3(masterChefAddress);
     lastRewardTimestamp = uint32(block.timestamp);
