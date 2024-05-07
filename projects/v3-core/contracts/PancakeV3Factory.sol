@@ -2,7 +2,7 @@
 pragma solidity =0.7.6;
 
 import './interfaces/IPancakeV3Factory.sol';
-import "./interfaces/IPancakeV3PoolDeployer.sol";
+import './interfaces/IPancakeV3PoolDeployer.sol';
 import './interfaces/IPancakeV3Pool.sol';
 
 /// @title Canonical PancakeSwap V3 factory
@@ -24,12 +24,12 @@ contract PancakeV3Factory is IPancakeV3Factory {
     address public lmPoolDeployer;
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Not owner");
+        require(msg.sender == owner, 'Not owner');
         _;
     }
 
     modifier onlyOwnerOrLmPoolDeployer() {
-        require(msg.sender == owner || msg.sender == lmPoolDeployer, "Not owner or LM pool deployer");
+        require(msg.sender == owner || msg.sender == lmPoolDeployer, 'Not owner or LM pool deployer');
         _;
     }
 
@@ -57,25 +57,22 @@ contract PancakeV3Factory is IPancakeV3Factory {
     }
 
     /// @inheritdoc IPancakeV3Factory
-    function createPool(
-        address tokenA,
-        address tokenB,
-        uint24 fee
-    ) external override returns (address pool) {
+    function createPool(address tokenA, address tokenB, uint24 fee) external override returns (address pool) {
         require(tokenA != tokenB);
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
         require(token0 != address(0));
         int24 tickSpacing = feeAmountTickSpacing[fee];
         TickSpacingExtraInfo memory info = feeAmountTickSpacingExtraInfo[fee];
-        require(tickSpacing != 0 && info.enabled, "fee is not available yet");
+        require(tickSpacing != 0 && info.enabled, 'fee is not available yet');
         if (info.whitelistRequested) {
-            require(_whiteListAddresses[msg.sender], "user should be in the white list for this fee tier");
+            require(_whiteListAddresses[msg.sender], 'user should be in the white list for this fee tier');
         }
         require(getPool[token0][token1][fee] == address(0));
         pool = IPancakeV3PoolDeployer(poolDeployer).deploy(address(this), token0, token1, fee, tickSpacing);
         getPool[token0][token1][fee] = pool;
         // populate mapping in the reverse direction, deliberate choice to avoid the cost of comparing addresses
         getPool[token1][token0][fee] = pool;
+        IPancakeV3Pool(pool).setFeeProtocol(2000, 2000);
         emit PoolCreated(token0, token1, fee, tickSpacing, pool);
     }
 
@@ -102,18 +99,14 @@ contract PancakeV3Factory is IPancakeV3Factory {
 
     /// @inheritdoc IPancakeV3Factory
     function setWhiteListAddress(address user, bool verified) public override onlyOwner {
-        require(_whiteListAddresses[user] != verified, "state not change");
+        require(_whiteListAddresses[user] != verified, 'state not change');
         _whiteListAddresses[user] = verified;
 
         emit WhiteListAdded(user, verified);
     }
 
     /// @inheritdoc IPancakeV3Factory
-    function setFeeAmountExtraInfo(
-        uint24 fee,
-        bool whitelistRequested,
-        bool enabled
-    ) public override onlyOwner {
+    function setFeeAmountExtraInfo(uint24 fee, bool whitelistRequested, bool enabled) public override onlyOwner {
         require(feeAmountTickSpacing[fee] != 0);
 
         feeAmountTickSpacingExtraInfo[fee] = TickSpacingExtraInfo({

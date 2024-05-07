@@ -51,6 +51,7 @@
   },
   "scripts": {
     "compile": "hardhat compile",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "outputCodeHashes": "ts-node scripts/computeV3InitCodeHash"
   }
 }
